@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5">
+        <div class="glass p-5 animate-fade-in shadow-lg">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-white mb-2">Join Us.</h2>
+                <p class="text-muted">Create an account to share your stories.</p>
+            </div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-4">
+                        <label class="text-white small fw-bold mb-2 ms-2">{{ field.label }}</label>
+                        <div class="glass p-1" style="border-radius: 12px;">
+                            <input type="{{ field.field.widget.input_type|default:'text' }}" 
+                                   name="{{ field.name }}" 
+                                   class="form-control bg-transparent border-0 text-white ps-3 py-2"
+                                   placeholder="{{ field.label }}"
+                                   {% if field.field.required %}required{% endif %}>
+                        </div>
+                        {% if field.errors %}
+                            <div class="text-danger small mt-1 ms-2">{{ field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                
+                <button class="btn-modern w-100 py-3 mt-3 shadow-lg">Create Account</button>
+            </form>
+            
+            <div class="text-center mt-5">
+                <p class="text-muted small">Already have an account? 
+                    <a href="{% url 'login' %}" class="gradient-text fw-bold text-decoration-none">Sign in here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

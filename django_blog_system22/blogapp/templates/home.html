@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Header Section -->
+<div class="row align-items-center mb-5 animate-fade-in">
+    <div class="col-lg-8">
+        <h1 class="display-4 fw-bold text-white mb-3">Latest <span class="gradient-text">Stories.</span></h1>
+        <p class="text-muted fs-5">Explore the intersection of design, technology, and lifestyle.</p>
+    </div>
+    <div class="col-lg-4">
+        <form method="GET" class="animate-fade-in">
+            <div class="input-group glass p-1" style="border-radius: 50px;">
+                <input type="text" name="search" class="form-control bg-transparent border-0 text-white ps-4" placeholder="Search articles...">
+                <button class="btn-modern px-4 py-2" style="border-radius: 50px;"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Category Filter -->
+<div class="d-flex flex-wrap gap-3 mb-5 animate-fade-in" style="animation-delay: 0.2s;">
+    <a href="{% url 'home' %}" class="{% if not selected_category %}btn-modern{% else %}nav-link-modern glass px-4 py-2{% endif %} rounded-pill text-decoration-none">
+        All Posts
+    </a>
+    {% for category in categories %}
+        <a href="?category={{ category.id }}" 
+           class="{% if selected_category == category.id %}btn-modern{% else %}nav-link-modern glass px-4 py-2{% endif %} rounded-pill text-decoration-none">
+            {{ category.name }}
+        </a>
+    {% endfor %}
+</div>
+
+<!-- Blog Grid -->
+<div class="row g-4 animate-fade-in" style="animation-delay: 0.4s;">
+    {% for blog in page_obj %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card-modern h-100 d-flex flex-column">
+            <div class="position-relative overflow-hidden" style="height: 240px;">
+                {% if blog.image %}
+                    <img src="{{ blog.image.url }}" class="w-100 h-100" style="object-fit: cover; transition: transform 0.5s ease;">
+                {% else %}
+                    <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-dark">
+                        <i class="fas fa-image text-muted fs-1"></i>
+                    </div>
+                {% endif %}
+                <div class="position-absolute top-0 start-0 m-3">
+                    <span class="badge glass px-3 py-2 text-white small" style="backdrop-filter: blur(8px);">{{ blog.category.name }}</span>
+                </div>
+            </div>
+            
+            <div class="p-4 flex-grow-1 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <small class="text-muted"><i class="far fa-calendar-alt me-2"></i>{{ blog.created_at|date:"M d, Y" }}</small>
+                </div>
+                <h4 class="fw-bold text-white mb-3" style="line-height: 1.4;">{{ blog.title }}</h4>
+                <p class="text-muted small mb-4 flex-grow-1">{{ blog.content|truncatewords:20 }}</p>
+                
+                <a href="{% url 'detail' blog.id %}" class="btn-modern w-100 text-center">
+                    Read Story <i class="fas fa-arrow-right ms-2 small"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5 glass">
+        <i class="fas fa-feather-alt text-muted fs-1 mb-4"></i>
+        <h3 class="text-muted">No stories found here.</h3>
+        <p class="text-muted mb-0">Try exploring other categories or search terms.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="d-flex justify-content-center mt-5 animate-fade-in" style="animation-delay: 0.6s;">
+    <nav>
+        <ul class="pagination gap-2">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link glass text-white border-0 px-4 py-2 rounded-pill" href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                        <i class="fas fa-chevron-left me-2"></i> Prev
+                    </a>
+                </li>
+            {% endif %}
+            
+            <li class="page-item active">
+                <span class="page-link btn-modern border-0 px-4 py-2 rounded-pill shadow-lg">{{ page_obj.number }}</span>
+            </li>
+            
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link glass text-white border-0 px-4 py-2 rounded-pill shadow-sm" href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}">
+                        Next <i class="fas fa-chevron-right ms-2"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %}
+
+<style>
+    .card-modern:hover img {
+        transform: scale(1.1);
+    }
+    .pagination .page-link {
+        transition: all 0.3s ease;
+    }
+    .pagination .page-link:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        transform: translateY(-2px);
+    }
+</style>
+
+{% endblock %}
+

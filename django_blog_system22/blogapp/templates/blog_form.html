@@ -1,0 +1,82 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}{{ title }} | Admin{% endblock %}
+
+{% block content %}
+<div class="mb-5 animate-fade-in">
+    <a href="{% url 'blog_manage' %}" class="nav-link-modern glass px-4 py-2 rounded-pill d-inline-flex align-items-center mb-4">
+        <i class="fas fa-arrow-left me-2"></i> Back to Manage
+    </a>
+    <h1 class="text-white fw-bold">{{ title }}.</h1>
+    <p class="text-muted">Fill in the details below to publish your story.</p>
+</div>
+
+<div class="glass p-5 animate-fade-in shadow-lg" style="max-width: 900px; margin: 0 auto; animation-delay: 0.1s;">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="row g-4">
+            {% for field in form %}
+            <div class="{% if field.name == 'content' %}col-12{% else %}col-md-6{% endif %}">
+                <div class="mb-4">
+                    <label class="text-white small fw-bold mb-2 ms-2">{{ field.label }}</label>
+                    <div class="glass p-1" style="border-radius: 12px;">
+                        {% if field.name == 'content' %}
+                            <textarea name="{{ field.name }}" 
+                                      class="form-control bg-transparent border-0 text-white ps-3 py-3"
+                                      rows="10"
+                                      placeholder="Write your story..."
+                                      {% if field.field.required %}required{% endif %}>{{ field.value|default:'' }}</textarea>
+                        {% elif field.name == 'category' %}
+                            <select name="{{ field.name }}" class="form-select bg-transparent border-0 text-white ps-3 py-2" style="background-color: #1a1a1a !important;">
+                                {% for choice in field.field.choices %}
+                                    <option value="{{ choice.0 }}" {% if field.value|stringformat:"s" == choice.0|stringformat:"s" %}selected{% endif %} class="bg-dark text-white">{{ choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        {% elif field.name == 'image' %}
+                            <input type="file" name="{{ field.name }}" class="form-control bg-transparent border-0 text-white-50 ps-3 py-2">
+                            {% if field.value %}
+                                <div class="mt-2 ms-2 small text-muted">Current: {{ field.value }}</div>
+                            {% endif %}
+                        {% else %}
+                            <input type="{{ field.field.widget.input_type|default:'text' }}" 
+                                   name="{{ field.name }}" 
+                                   value="{{ field.value|default:'' }}"
+                                   class="form-control bg-transparent border-0 text-white ps-3 py-2"
+                                   placeholder="{{ field.label }}"
+                                   {% if field.field.required %}required{% endif %}>
+                        {% endif %}
+                    </div>
+                    {% if field.errors %}
+                        <div class="text-danger small mt-1 ms-2"><i class="fas fa-exclamation-circle me-1"></i> {{ field.errors.0 }}</div>
+                    {% endif %}
+                    {% if field.help_text %}
+                        <small class="text-muted ms-2 mt-1 d-block" style="font-size: 11px;">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-5 pt-4 border-top border-secondary border-opacity-10 d-flex gap-3">
+            <button type="submit" class="btn-modern px-5 py-3 shadow-lg">
+                <i class="fas fa-paper-plane me-2"></i> {{ title }}
+            </button>
+            <a href="{% url 'blog_manage' %}" class="btn glass px-5 py-3 rounded-pill text-white text-decoration-none">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .form-select option {
+        background-color: #1a1a1a;
+        color: white;
+    }
+    textarea:focus, input:focus, select:focus {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        box-shadow: var(--accent-glow) !important;
+    }
+</style>
+{% endblock %}

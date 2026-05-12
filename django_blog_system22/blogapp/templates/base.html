@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Blog System{% endblock %}</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+        body { 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            background: radial-gradient(circle at top right, #1a0b2e, #050505);
+            background-attachment: fixed;
+        }
+        .main-content { flex: 1; }
+        
+        /* Custom Navbar */
+        .navbar-custom {
+            margin-top: 20px;
+            padding: 15px 30px;
+            z-index: 1000;
+        }
+        
+        .nav-link-modern {
+            color: #d1d1d1; /* Brighter muted color */
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .nav-link-modern:hover {
+            color: #ffffff;
+            text-shadow: var(--accent-glow);
+        }
+        
+        /* Footer Glow */
+        footer {
+            border-top: 1px solid var(--glass-border);
+            margin-top: 100px;
+            position: relative;
+            overflow: hidden;
+            background: rgba(0,0,0,0.5);
+        }
+        
+        footer a {
+            color: #cdcdcd !important;
+            transition: color 0.3s ease;
+        }
+        
+        footer a:hover {
+            color: #ffffff !important;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 100px;
+            background: var(--primary-gradient);
+            filter: blur(80px);
+            opacity: 0.2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <nav class="navbar-custom glass d-flex align-items-center justify-content-between animate-fade-in">
+        <a class="navbar-brand fs-3 fw-bold gradient-text" href="/">ELEGANT.</a>
+        
+        <div class="d-flex align-items-center gap-4">
+            <a href="/" class="nav-link-modern">Explore</a>
+            {% if user.is_authenticated %}
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-muted small">Hello, <span class="text-white fw-bold">{{ user.username }}</span></span>
+                    <a href="{% url 'admin_dashboard' %}" class="btn-modern py-2 px-4" style="font-size: 0.9rem;">Dashboard</a>
+                    <a href="/logout/" class="text-muted text-decoration-none hover-white small"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+            {% else %}
+                <a href="/login/" class="nav-link-modern">Login</a>
+                <a href="/register/" class="btn-modern py-2 px-4">Get Started</a>
+            {% endif %}
+        </div>
+    </nav>
+</div>
+
+<main class="main-content container py-5 animate-fade-in">
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="py-5 glass mt-auto">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-4">
+                <h3 class="gradient-text fw-bold mb-4">ELEGANT.</h3>
+                <p class="text-muted lh-lg">Crafting digital stories with a touch of modern aesthetics. Join our community of creative minds.</p>
+                <div class="d-flex gap-3 mt-4">
+                    <a href="#" class="btn-modern p-0 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 12px;"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="btn-modern p-0 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 12px;"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="btn-modern p-0 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 12px;"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-2 ms-auto">
+                <h5 class="text-white mb-4">Navigation</h5>
+                <ul class="list-unstyled d-flex flex-column gap-2">
+                    <li><a href="/" class="text-muted text-decoration-none hover-white">Home</a></li>
+                    <li><a href="/login/" class="text-muted text-decoration-none hover-white">Sign In</a></li>
+                    <li><a href="/register/" class="text-muted text-decoration-none hover-white">Join Us</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3">
+                <h5 class="text-white mb-4">Newsletter</h5>
+                <div class="input-group glass p-1">
+                    <input type="text" class="form-control bg-transparent border-0 text-white ps-3" placeholder="Email Address">
+                    <button class="btn-modern px-3 py-2"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="mt-5 pt-4 border-top border-secondary border-opacity-10 d-flex flex-wrap justify-content-between gap-3">
+            <p class="text-muted small mb-0">&copy; 2026 Elegant Blog. All rights reserved.</p>
+            <div class="d-flex gap-4">
+                <a href="#" class="text-muted small text-decoration-none hover-white">Privacy</a>
+                <a href="#" class="text-muted small text-decoration-none hover-white">Terms</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .hover-white:hover { color: white !important; }
+</style>
+</body>
+</html>
+

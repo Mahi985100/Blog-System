@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Back Button -->
+<div class="mb-4 animate-fade-in">
+    <a href="{% url 'home' %}" class="nav-link-modern glass px-4 py-2 rounded-pill d-inline-flex align-items-center">
+        <i class="fas fa-arrow-left me-2"></i> Back to Explore
+    </a>
+</div>
+
+<article class="animate-fade-in" style="animation-delay: 0.2s;">
+    <!-- Hero Section -->
+    <div class="card-modern border-0 mb-5 overflow-hidden position-relative" style="min-height: 450px;">
+        {% if blog.image %}
+            <img src="{{ blog.image.url }}" class="position-absolute w-100 h-100" style="object-fit: cover; z-index: 1;">
+            <div class="position-absolute w-100 h-100" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.9)); z-index: 2;"></div>
+        {% else %}
+            <div class="position-absolute w-100 h-100 bg-dark" style="z-index: 1;"></div>
+        {% endif %}
+        
+        <div class="position-relative p-5 d-flex flex-column justify-content-end h-100" style="z-index: 3; min-height: 450px;">
+            <div class="mb-3">
+                <span class="badge btn-modern px-3 py-2" style="font-size: 0.8rem;">{{ blog.category.name }}</span>
+            </div>
+            <h1 class="display-3 fw-bold text-white mb-4 lh-sm">{{ blog.title }}</h1>
+            <div class="d-flex align-items-center gap-4 text-white-50">
+                <span><i class="far fa-calendar-alt me-2 text-white"></i>{{ blog.created_at|date:"F d, Y" }}</span>
+                <span><i class="far fa-user me-2 text-white"></i>{{ blog.author.username }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="glass p-5 mb-5 shadow-lg">
+                <div class="article-content text-muted fs-5 lh-lg">
+                    {{ blog.content|linebreaks }}
+                </div>
+                
+                <hr class="my-5 border-secondary opacity-10">
+                
+                <!-- Interaction -->
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <div class="d-flex gap-3">
+                        <button class="nav-link-modern glass p-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <button class="nav-link-modern glass p-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <i class="far fa-comment"></i>
+                        </button>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="nav-link-modern glass p-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="nav-link-modern glass p-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="fab fa-facebook-f"></i></a>
+                    </div>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="comments-section mt-5">
+                    <h3 class="text-white fw-bold mb-4">Thoughts <span class="text-muted">({{ comments.count }})</span></h3>
+                    
+                    <div class="d-flex flex-column gap-4">
+                        {% for comment in comments %}
+                        <div class="glass p-4 animate-fade-in">
+                            <div class="d-flex gap-3 align-items-center mb-3">
+                                <div class="btn-modern p-0 d-flex align-items-center justify-content-center fw-bold" style="width: 40px; height: 40px; border-radius: 50%;">
+                                    {{ comment.user.username|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <h6 class="text-white mb-0">{{ comment.user.username }}</h6>
+                                    <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-0 lh-base">{{ comment.text }}</p>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-4 glass border-dashed">
+                            <p class="text-muted mb-0 italic">No comments yet. Start the conversation!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Comment Form -->
+                    {% if user.is_authenticated %}
+                    <div class="mt-5 glass p-4">
+                        <h5 class="text-white mb-3">Leave a Thought</h5>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <textarea name="text" class="form-control bg-transparent border-secondary border-opacity-25 text-white" rows="3" placeholder="Write something amazing..." required style="resize: none;"></textarea>
+                            </div>
+                            <button class="btn-modern">Post Thought</button>
+                        </form>
+                    </div>
+                    {% else %}
+                    <div class="mt-5 glass p-4 text-center">
+                        <p class="text-muted mb-3">Please login to share your thoughts.</p>
+                        <a href="{% url 'login' %}" class="btn-modern">Login to Comment</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+
+<style>
+    .article-content {
+        color: #d1d1d1 !important;
+    }
+    .article-content p {
+        margin-bottom: 1.5rem;
+    }
+    .border-dashed {
+        border-style: dashed !important;
+    }
+</style>
+
+{% endblock %}
